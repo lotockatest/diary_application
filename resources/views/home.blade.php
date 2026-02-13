@@ -29,10 +29,12 @@
     <div class="bg-white rounded-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
         <h2 class="text-2xl font-bold text-center text-purple-600 mb-4" id="modalDate"></h2>
 
+        <form method="POST" action="{{ route('entry.store') }}">
+            @csrf
         
         <div class="mb-4">
             <label class="block font-medium mb-1">Mood for the day:</label>
-            <select id="mood" class="w-full border rounded-lg px-3 py-2">
+            <select id="mood"  name="mood" class="w-full border rounded-lg px-3 py-2">
                 <option>Happy</option>
                 <option>Sad</option>
                 <option>Neutral</option>
@@ -45,10 +47,10 @@
         <div class="mb-4">
             <label class="block font-medium mb-1">Activities:</label>
             <div class="flex flex-wrap gap-2">
-                <label><input type="checkbox" value="Workout" class="mr-1">Workout</label>
-                <label><input type="checkbox" value="Study" class="mr-1">Study</label>
-                <label><input type="checkbox" value="Work" class="mr-1">Work</label>
-                <label><input type="checkbox" value="Read" class="mr-1">Read</label>
+                <label><input type="checkbox" name="activities[]" value="Workout" class="mr-1">Workout</label>
+                <label><input type="checkbox" name="activities[]" value="Study" class="mr-1">Study</label>
+                <label><input type="checkbox" name="activities[]" value="Work" class="mr-1">Work</label>
+                <label><input type="checkbox" name="activities[]" value="Read" class="mr-1">Read</label>
             </div>
         </div>
 
@@ -56,22 +58,22 @@
         <div class="mb-4">
             <label class="block font-medium mb-1">Routines:</label>
             <div class="flex flex-wrap gap-2">
-                <label><input type="checkbox" value="Morning Routine" class="mr-1">Morning Routine</label>
-                <label><input type="checkbox" value="Evening Routine" class="mr-1">Evening Routine</label>
-                <label><input type="checkbox" value="Meditation" class="mr-1">Meditation</label>
+                <label><input type="checkbox" name="routines[]" value="Morning Routine" class="mr-1">Morning Routine</label>
+                <label><input type="checkbox" name="routines[]" value="Evening Routine" class="mr-1">Evening Routine</label>
+                <label><input type="checkbox" name="routines[]" value="Meditation" class="mr-1">Meditation</label>
             </div>
         </div>
 
         
         <div class="mb-4">
             <label class="block font-medium mb-1">Notes:</label>
-            <textarea id="notes" rows="4" class="w-full border rounded-lg px-3 py-2"></textarea>
+            <textarea id="notes" name="notes" rows="4" class="w-full border rounded-lg px-3 py-2"></textarea>
         </div>
 
         
         <div class="flex justify-end gap-2">
-            <button id="closeModal" class="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400">Cancel</button>
-            <button id="saveEntry" class="px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700">Save Entry</button>
+            <button type="button" id="closeModal" class="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400">Cancel</button>
+            <button type="submit" id="saveEntry" class="px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700">Save Entry</button>
         </div>
     </div>
 </div>
@@ -141,16 +143,6 @@ function openModal(day) {
 }
 
 closeModalBtn.addEventListener('click', () => {
-    entryModal.classList.add('hidden');
-});
-
-
-    saveEntryBtn.addEventListener('click', () => {
-        const mood = document.getElementById('mood').value;
-        const activities = Array.from(document.querySelectorAll('#entryModal input[type="checkbox"]:checked')).map(cb => cb.value);
-        const notes = document.getElementById('notes').value;
-
-    console.log({ mood, activities, notes });
     entryModal.classList.add('hidden');
 });
 

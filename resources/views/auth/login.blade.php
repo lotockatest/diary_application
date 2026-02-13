@@ -3,10 +3,12 @@
 @section('content')
 <h2 class="text-2xl font-bold text-center text-blue-600 mb-6">Login</h2>
 
-<form class="space-y-4" action="{{ route('home') }}" method="get"> <!--remove when making db-->
+<form method="POST" action="{{ route('login.submit') }}" class="space-y-4">
+    @csrf
+    
     <div>
         <label class="block text-sm font-medium">Email</label>
-        <input type="email" name="email" required
+        <input type="email" name="email" value="{{ old('email') }}" required
                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
     </div>
 
@@ -15,6 +17,16 @@
         <input type="password" name="password" required
                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
     </div>
+
+    @if ($errors->any())
+        <div class="mb-4 text-red-600">
+            <ul class="list-disc pl-5">
+                @foreach ($errors->all() as $error)
+                    <div>{{ $error }}</div>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
     <button type="submit"
             class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition">

@@ -3,23 +3,36 @@
 @section('content')
 <h2 class="text-2xl font-bold text-center text-purple-600 mb-6">Register</h2>
 
-<form class="space-y-4">
+<form method="POST" action="{{ route('register') }}" class="space-y-4">
+    @csrf
+
     <div>
         <label class="block text-sm font-medium">Username</label>
         <input type="text" name="username" required
+               value="{{ old('username') }}"
                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400">
+        @error('username')
+            <p class="text-red-500 text-sm">{{ $message }}</p>
+        @enderror
     </div>
 
     <div>
         <label class="block text-sm font-medium">Email</label>
         <input type="email" name="email" required
+               value="{{ old('email') }}"
                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400">
+        @error('email')
+            <p class="text-red-500 text-sm">{{ $message }}</p>
+        @enderror
     </div>
 
     <div>
         <label class="block text-sm font-medium">Password</label>
         <input type="password" name="password" required
                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400">
+        @error('password')
+            <p class="text-red-500 text-sm">{{ $message }}</p>
+        @enderror
     </div>
 
     <button type="submit"
