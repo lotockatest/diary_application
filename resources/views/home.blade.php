@@ -31,6 +31,18 @@
 
         <form method="POST" action="{{ route('entry.store') }}">
             @csrf
+
+        @if ($errors->any())
+            <div class="bg-red-100 text-red-700 p-3 rounded mb-3">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <input type="hidden" name="date" id="date">
         
         <div class="mb-4">
             <label class="block font-medium mb-1">Mood for the day:</label>
@@ -75,10 +87,13 @@
             <button type="button" id="closeModal" class="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400">Cancel</button>
             <button type="submit" id="saveEntry" class="px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700">Save Entry</button>
         </div>
+
+        <div id="entryData" data-entries='@json($entries ?? [])'></div>
     </div>
 </div>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    const savedEntries = JSON.parse(document.getElementById('entryData').dataset.entries);
     const monthYear = document.getElementById('monthYear');
     const daysContainer = document.getElementById('days');
     const prevMonthBtn = document.getElementById('prevMonth');
@@ -138,7 +153,59 @@ const closeModalBtn = document.getElementById('closeModal');
 const saveEntryBtn = document.getElementById('saveEntry');
 
 function openModal(day) {
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const formattedDay = String(day).padStart(2, '0');
+
+    const fullDate = `${year}-${month}-${formattedDay}`;
+
+    document.getElementById('date').value = fullDate;
     modalDate.textContent = `Day: ${day}`;
+
+    document.querySelector('select[name="mood"]').value = 'Happy';
+    document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+    document.querySelector('textarea[name="notes"]').value = '';
+
+    const existingEntry = savedEntries.find(entry => {
+        return entry.date.startsWith(fullDate);
+    });
+
+    const moodSelect = document.querySelector('select[name="mood"]');
+    const activities = document.querySelectorAll('input[name="activities[]"]');
+    const routines = document.querySelectorAll('input[name="routines[]"]');
+    const notes = document.querySelector('textarea[name="notes"]');
+
+    moodSelect.value = 'Happy';
+    activities.forEach(cb => cb.checked = false);
+    routines.forEach(cb => cb.checked = false);
+    notes.value = '';
+
+    if (existingEntry) {
+
+        document.querySelector('select[name="mood"]').value = existingEntry.mood;
+
+        existingEntry.activities.forEach(activity => {
+            const checkbox = document.querySelector(`input[name="activities[]"][value="${activity}"]`);
+            if (checkbox) checkbox.checked = true;
+        });
+
+        existingEntry.routines.forEach(routine => {
+            const checkbox = document.querySelector(`input[name="routines[]"][value="${routine}"]`);
+            if (checkbox) checkbox.checked = true;
+        });
+
+        document.querySelector('textarea[name="notes"]').value = existingEntry.notes ?? '';
+    }
+
+    const today = new Date();
+    const isToday = fullDate === today.toISOString().split('T')[0];
+
+    moodSelect.disabled = !isToday;
+    activities.forEach(cb => cb.disabled = !isToday);
+    routines.forEach(cb => cb.disabled = !isToday);
+    notes.readOnly = !isToday;
+    saveEntryBtn.style.display = isToday ? 'inline-block' : 'none';
+
     entryModal.classList.remove('hidden');
 }
 

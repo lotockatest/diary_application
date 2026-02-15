@@ -5,21 +5,26 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Entry;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class EntryController extends Controller
 {
     //
-     public function store(Request $request)
-    {
+    public function store(Request $request) {
+
         $request->validate([
+            'date' => 'required|date',
             'mood' => 'required|string',
             'activities' => 'required|array',
             'routines' => 'required|array',
             'notes' => 'nullable|string',
         ]);
 
-        Entry::create([
+        Entry::updateOrCreate([
             'user_id' => Auth::id(),
+            'date' => Carbon::parse($request->date)->format('Y-m-d'),
+        ],
+        [
             'mood' => $request->mood,
             'activities' => $request->activities ?? [],
             'routines' => $request->routines ?? [],
@@ -27,5 +32,12 @@ class EntryController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Entry saved!');
+    }
+
+    public function index() {
+
+        $entries = Entry::where('user_id', Auth::id())->get();
+
+        return view('home', compact('entries'));
     }
 }

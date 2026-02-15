@@ -15,10 +15,12 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->date('date');
             $table->string('mood');
             $table->json('activities');
             $table->json('routines');
             $table->text('notes')->nullable();
+            $table->unique(['user_id', 'date']);
         });
     }
 

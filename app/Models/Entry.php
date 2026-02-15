@@ -12,6 +12,7 @@ class Entry extends Model
 
     protected $fillable = [
         'user_id',
+        'date',
         'mood',
         'activities',
         'routines',
@@ -21,6 +22,7 @@ class Entry extends Model
     protected $casts = [
         'activities' => 'array',
         'routines' => 'array',
+        'date' => 'date:Y-m-d',
     ];
 
     public function user()
