@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Entry;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use App\Models\Mood;
+use App\Models\Routine;
+use App\Models\Activity;
 
 class EntryController extends Controller
 {
@@ -37,7 +40,10 @@ class EntryController extends Controller
     public function index() {
 
         $entries = Entry::where('user_id', Auth::id())->get();
+        $moods = Mood::where('user_id', Auth::id())->get();
+        $activities = Activity::where('user_id', Auth::id())->get();
+        $routines = Routine::where('user_id', Auth::id())->get();
 
-        return view('home', compact('entries'));
+        return view('home', compact('entries','moods','activities','routines'));
     }
 }

@@ -1,6 +1,17 @@
 @extends('layouts.app')
 
 @section('content')
+
+<div class="flex justify-center gap-4 mb-4">
+    <a href="{{ route('customization') }}" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-center">Customization</a>
+    <a href="{{ route('statistics') }}" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-center">Statistics</a>
+    <a href="{{ route('goal') }}" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-center">Goals</a>
+    <form method="POST" action="{{ route('logout') }}"><!--{{ route('logout') }}-->
+        @csrf
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-center">Logout</button>
+    </form>
+</div>
+
 <div id="calendar" class="bg-white rounded-2xl shadow-lg p-6">
     
     <div class="flex justify-between items-center mb-4">
@@ -8,7 +19,6 @@
         <h2 id="monthYear" class="text-xl font-bold text-center text-purple-600"></h2>
         <button id="nextMonth" class="text-blue-600 hover:text-blue-800">&gt;</button>
     </div>
-
     
     <div class="grid grid-cols-7 text-center text-sm font-semibold text-gray-500 mb-2">
         <div>Sun</div>
@@ -20,10 +30,8 @@
         <div>Sat</div>
     </div>
 
-    
     <div id="days" class="grid grid-cols-7 gap-2 text-center"></div>
 </div>
-
 
 <div id="entryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
     <div class="bg-white rounded-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
@@ -47,42 +55,41 @@
         <div class="mb-4">
             <label class="block font-medium mb-1">Mood for the day:</label>
             <select id="mood"  name="mood" class="w-full border rounded-lg px-3 py-2">
-                <option>Happy</option>
-                <option>Sad</option>
-                <option>Neutral</option>
-                <option>Excited</option>
-                <option>Tired</option>
+                @foreach($moods as $mood)
+                    <option value="{{ $mood->name }}">{{ $mood->name }}</option>
+                @endforeach
             </select>
         </div>
 
-        
         <div class="mb-4">
             <label class="block font-medium mb-1">Activities:</label>
             <div class="flex flex-wrap gap-2">
-                <label><input type="checkbox" name="activities[]" value="Workout" class="mr-1">Workout</label>
-                <label><input type="checkbox" name="activities[]" value="Study" class="mr-1">Study</label>
-                <label><input type="checkbox" name="activities[]" value="Work" class="mr-1">Work</label>
-                <label><input type="checkbox" name="activities[]" value="Read" class="mr-1">Read</label>
+                @foreach($activities as $activity)
+                    <label>
+                        <input type="checkbox" name="activities[]" value="{{ $activity->name }}" class="mr-1">
+                        {{ $activity->name }}
+                    </label>
+                @endforeach
             </div>
         </div>
-
         
         <div class="mb-4">
             <label class="block font-medium mb-1">Routines:</label>
             <div class="flex flex-wrap gap-2">
-                <label><input type="checkbox" name="routines[]" value="Morning Routine" class="mr-1">Morning Routine</label>
-                <label><input type="checkbox" name="routines[]" value="Evening Routine" class="mr-1">Evening Routine</label>
-                <label><input type="checkbox" name="routines[]" value="Meditation" class="mr-1">Meditation</label>
+                @foreach($routines as $routine)
+                    <label>
+                        <input type="checkbox" name="routines[]" value="{{ $routine->name }}" class="mr-1">
+                        {{ $routine->name }}
+                    </label>
+                @endforeach
             </div>
         </div>
 
-        
         <div class="mb-4">
             <label class="block font-medium mb-1">Notes:</label>
             <textarea id="notes" name="notes" rows="4" class="w-full border rounded-lg px-3 py-2"></textarea>
         </div>
 
-        
         <div class="flex justify-end gap-2">
             <button type="button" id="closeModal" class="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400">Cancel</button>
             <button type="submit" id="saveEntry" class="px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700">Save Entry</button>
@@ -210,7 +217,9 @@ function openModal(day) {
 }
 
 closeModalBtn.addEventListener('click', () => {
-    entryModal.classList.add('hidden');
+    if (confirm('Are you sure you want to cancel?')) {
+            entryModal.classList.add('hidden');
+        }
 });
 
 });
