@@ -5,9 +5,9 @@
 
     <h1 class="text-2xl font-bold mb-4 text-purple-600">Goals</h1>
 
-    <a href="{{ route('home') }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 ml-2">Back</a>
-
     <button id="addGoalBtn" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 mb-4">Add Goal</button>
+
+    <a href="{{ route('home') }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 ml-2">Back</a>
 
     <div id="goalsList" class="space-y-4">
         @if (isset($goals) && count($goals) > 0)

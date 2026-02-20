@@ -29,6 +29,14 @@ Route::post('/customization/mood', [CustomizationController::class, 'storeMood']
 Route::post('/customization/routine', [CustomizationController::class, 'storeRoutine'])->name('customization.routine.store');
 Route::post('/customization/activity', [CustomizationController::class, 'storeActivity'])->name('customization.activity.store');
 
+Route::delete('/customization/mood/{mood}', [CustomizationController::class, 'destroyMood'])->name('customization.mood.destroy');
+Route::delete('/customization/routine/{routine}', [CustomizationController::class, 'destroyRoutine'])->name('customization.routine.destroy');
+Route::delete('/customization/activity/{activity}', [CustomizationController::class, 'destroyActivity'])->name('customization.activity.destroy');
+
+Route::put('/customization/routine/{routine}/update', [CustomizationController::class, 'updateRoutine'])->name('customization.routine.update');
+Route::put('/customization/activity/{activity}/update', [CustomizationController::class, 'updateActivity'])->name('customization.activity.update');
+Route::put('/customization/mood/{mood}/update', [CustomizationController::class, 'updateMood'])->name('customization.mood.update');
+
 Route::get('/statistics', [StatisticsController::class, 'index'])->name('statistics');
 Route::get('/goal', [GoalController::class, 'index'])->name('goal');
 

@@ -17,9 +17,20 @@ class DefaultCustomizationSeeder extends Seeder
     public function run(): void {
         //
         $defaults = [
-        'moods' => ['Happy', 'Sad', 'Neutral'],
-        'routines' => ['Morning Routine', 'Evening Routine'],
-        'activities' => ['Study', 'Exercise', 'Read'],
+            'moods' => [
+                ['name' => 'Happy', 'icon' => 'face-smile'],
+                ['name' => 'Sad', 'icon' => 'face-frown'],
+                ['name' => 'Energetic', 'icon' => 'bolt'],
+            ],
+            'routines' => [
+                ['name' => 'Morning Routine', 'icon' => 'sun'],
+                ['name' => 'Evening Routine', 'icon' => 'moon'],
+            ],
+            'activities' => [
+                ['name' => 'Study', 'icon' => 'academic-cap'],
+                ['name' => 'Draw', 'icon' => 'pencil-square'],
+                ['name' => 'Read', 'icon' => 'book-open'],
+            ],
         ];
 
         $users = User::all();
@@ -27,24 +38,24 @@ class DefaultCustomizationSeeder extends Seeder
         foreach ($users as $user) {
 
         foreach ($defaults['moods'] as $mood) {
-            Mood::firstOrCreate([
-                'user_id' => $user->id,
-                'name' => $mood
-            ]);
+            Mood::firstOrCreate(
+                ['user_id' => $user->id, 'name' => $mood['name']],
+                ['icon' => $mood['icon']]
+            );
         }
 
         foreach ($defaults['routines'] as $routine) {
-            Routine::firstOrCreate([
-                'user_id' => $user->id,
-                'name' => $routine
-            ]);
+            Routine::firstOrCreate(
+                ['user_id' => $user->id, 'name' => $routine['name']],
+                ['icon' => $routine['icon']]
+            );
         }
 
-         foreach ($defaults['activities'] as $activity) {
-            Activity::firstOrCreate([
-                'user_id' => $user->id,
-                'name' => $activity
-            ]);
+        foreach ($defaults['activities'] as $activity) {
+            Activity::firstOrCreate(
+                ['user_id' => $user->id, 'name' => $activity['name']],
+                ['icon' => $activity['icon']]
+            );
         }
     }
 }}

@@ -21,33 +21,65 @@
 
             <ul data-category="moods">
                 @foreach($moods as $mood)
-                    <li>{{ $mood->name }}</li>
+                    <li class="flex items-center gap-2">
+                        <div class="flex items-center gap-2">
+                            <x-dynamic-component :component="'heroicon-s-' . ($mood->icon ?? 'face-smile')" class="w-5 h-5 text-purple-600"/>
+                            <span>{{ $mood->name }}</span>
+                        </div>
+                        <div class="flex gap-1">
+                            <button type="button" class="edit-btn text-blue-600 hover:text-blue-800" data-id="{{ $mood->id }}" data-name="{{ $mood->name }}" data-icon="{{ $mood->icon ?? 'face-smile' }}"><x-dynamic-component :component="'heroicon-s-pencil-square'" class="w-5 h-5"/></button>
+                            <form action="{{ route('customization.mood.destroy', $mood) }}" method="POST" class="inline ml-2">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-blue-600 hover:text-blue-800 font-bold">&times;</button>
+                            </form>
+                        </div>
+                    </li>
                 @endforeach
             </ul>
 
             <ul data-category="routines">
                 @foreach($routines as $routine)
-                    <li>{{ $routine->name }}</li>
+                    <li class="flex items-center gap-2">
+                        <div class="flex items-center gap-2">
+                            <x-dynamic-component :component="'heroicon-s-' . ($routine->icon ?? 'face-smile')" class="w-5 h-5 text-purple-600"/>
+                            <span>{{ $routine->name }}</span>
+                        </div>
+                        <div class="flex gap-1">
+                            <button type="button" class="edit-btn text-blue-600 hover:text-blue-800" data-id="{{ $routine->id }}" data-name="{{ $routine->name }}" data-icon="{{ $routine->icon ?? 'face-smile' }}"><x-dynamic-component :component="'heroicon-s-pencil-square'" class="w-5 h-5"/></button>
+                            <form action="{{ route('customization.routine.destroy', $routine) }}" method="POST" class="inline ml-2">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-blue-600 hover:text-blue-800 font-bold">&times;</button>
+                            </form>
+                        </div>
+                    </li>
                 @endforeach
             </ul>
 
             <ul data-category="activities">
                 @foreach($activities as $activity)
-                    <li>{{ $activity->name }}</li>
+                    <li class="flex items-center gap-2">
+                        <div class="flex items-center gap-2">
+                            <x-dynamic-component :component="'heroicon-s-' . ($activity->icon ?? 'face-smile')" class="w-5 h-5 text-purple-600"/>
+                            <span>{{ $activity->name }}</span>
+                        </div>
+                        <div class="flex gap-1">
+                            <button type="button" class="edit-btn text-blue-600 hover:text-blue-800 font-bold" data-id="{{ $activity->id }}" data-name="{{ $activity->name }}" data-icon="{{ $activity->icon ?? 'face-smile' }}"><x-dynamic-component :component="'heroicon-s-pencil-square'" class="w-5 h-5"/></button>
+                            <form action="{{ route('customization.activity.destroy', $activity) }}" method="POST" class="inline ml-2">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-blue-600 hover:text-blue-800 font-bold">&times;</button>
+                            </form>
+                        </div>
+                    </li>
                 @endforeach
             </ul>
 
         </div>
-<!-- -->
+
         <button id="addNewBtn" class="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Add New</button>
 
-        <!--<div id="addFormContainer" class="mt-4 hidden">
-            <input type="text" id="newItemInput" placeholder="Enter new name" class="border rounded-lg px-3 py-2 w-full mb-2">
-            <p id="inputError" class="text-red-600 text-sm hidden mb-2">Name cannot be empty.</p>
-            <div class="flex gap-2">
-                <button id="saveNewItem" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Save</button>
-                <button id="cancelNewItem" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Cancel</button>
-            </div>-->
     <div id="addFormContainer" class="mt-4 hidden">
         <form id="addForm" method="POST">
             @csrf
@@ -60,26 +92,68 @@
                 <p class="text-red-600 text-sm mb-2">{{ $message }}</p>
             @enderror
 
-            <div class="flex gap-2">
-                <button type="submit"
-                        class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
-                    Save
-                </button>
+            <div class="mb-3">
+                <label class="block mb-1 font-medium">Choose Icon</label>
 
-                <button type="button" id="cancelNewItem"
-                        class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">
-                    Cancel
-                </button>
+                <div class="grid grid-cols-6 gap-3">
+                    @php
+                        $icons = ['face-smile','face-frown','hand-thumb-down','hand-thumb-up','heart','bolt','academic-cap','home','star','banknotes',
+                        'beaker','battery-0','battery-100','beaker','bolt-slash','book-open', 'briefcase',
+                        'calculator','camera','chat-bubble-bottom-center-text','chat-bubble-left-right',
+                        'cloud','computer-desktop','fire','globe-asia-australia','paint-brush','microphone',
+                        'musical-note','puzzle-piece','rocket-launch','sparkles','shopping-bag','trophy',
+                        'users','tv','video-camera','wrench-screwdriver'];
+                    @endphp
+
+                    @foreach($icons as $icon)
+                        <label class="cursor-pointer">
+                            <input type="radio" name="icon" value="{{ $icon }}" class="hidden peer" required>
+
+                            <div class="flex items-center justify-center p-2 rounded-lg border peer-checked:bg-purple-100 peer-checked:border-purple-600">
+                                <x-dynamic-component :component="'heroicon-s-' . $icon" class="w-6 h-6 text-purple-600"/>
+                            </div>
+                        </label>
+                    @endforeach
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Save</button>
+                <button type="button" id="cancelNewItem" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Cancel</button>
             </div>
         </form>
     </div>
+    <div id="editFormContainer" class="mt-4 hidden">
+            <form id="editForm" method="POST">
+                @csrf
+                @method('PUT')
+                <input type="text" name="name" id="editItemName" class="border rounded-lg px-3 py-2 w-full mb-2" required>
+                <div class="mb-3">
+                    <label class="block mb-1 font-medium">Choose Icon</label>
+                    <div class="grid grid-cols-6 gap-3" id="editIconGrid">
+                        @foreach($icons as $icon)
+                            <label class="cursor-pointer">
+                                <input type="radio" name="icon" value="{{ $icon }}" class="hidden peer">
+                                <div class="flex items-center justify-center p-2 rounded-lg border
+                                            peer-checked:bg-purple-100 peer-checked:border-purple-600">
+                                    <x-dynamic-component :component="'heroicon-s-' . $icon" class="w-6 h-6 text-purple-600"/>
+                                </div>
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+
+                <div class="flex gap-2">
+                    <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Save</button>
+                    <button type="button" id="cancelEdit" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Cancel</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    //
-    //
+   
     let currentCategory = null;
 
     const categoryTitle = document.getElementById('categoryTitle');
@@ -88,7 +162,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const addFormContainer = document.getElementById('addFormContainer');
     const newItemInput = document.getElementById('newItemInput');
     const inputError = document.getElementById('inputError');
-    //const saveNewItem = document.getElementById('saveNewItem');
     const cancelNewItem = document.getElementById('cancelNewItem');
     const addForm = document.getElementById('addForm');
 
@@ -129,27 +202,36 @@ document.addEventListener('DOMContentLoaded', function () {
         newItemInput.focus();
     });
 
-    /*saveNewItem.addEventListener('click', () => {
-        const value = newItemInput.value.trim();
-        if (!value) {
-            inputError.classList.remove('hidden');
-            return;
-        }
-        const li = document.createElement('li');
-        li.textContent = value;
-        categoryList.appendChild(li);
-
-        addFormContainer.classList.add('hidden');
-        newItemInput.value = '';
-        inputError.classList.add('hidden');
-    });*/
-
     cancelNewItem.addEventListener('click', () => {
         if (confirm('Are you sure you want to cancel?')) {
             addFormContainer.classList.add('hidden');
             newItemInput.value = '';
             inputError.classList.add('hidden');
         }
+    });
+
+   categoryList.addEventListener('click', function (e) {
+        const btn = e.target.closest('.edit-btn');
+        if (!btn) return;
+        const id = btn.dataset.id;
+        const name = btn.dataset.name;
+        const icon = btn.dataset.icon;
+
+        const editFormContainer = document.getElementById('editFormContainer');
+        const editForm = document.getElementById('editForm');
+        const editItemName = document.getElementById('editItemName');
+        if (currentCategory === 'routines') {
+            editForm.action = `/customization/routine/${id}/update`;
+        } else if (currentCategory === 'activities') {
+            editForm.action = `/customization/activity/${id}/update`;
+        } else if (currentCategory === 'moods') {
+            editForm.action = `/customization/mood/${id}/update`;
+        }
+        editItemName.value = name;
+        document.querySelectorAll('#editIconGrid input').forEach(input => {
+            input.checked = input.value === icon;
+        });
+        editFormContainer.classList.remove('hidden');
     });
 });
 </script>

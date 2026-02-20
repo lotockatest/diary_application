@@ -25,28 +25,42 @@ class User extends Authenticatable
     protected static function booted() {
         static::created(function ($user) {
 
-            $moods = ['Happy', 'Sad', 'Neutral'];
-            $routines = ['Morning Routine', 'Evening Routine'];
-            $activities = ['Study', 'Exercise', 'Read'];
+            $moods = [
+                ['name' => 'Happy', 'icon' => 'face-smile'],
+                ['name' => 'Sad', 'icon' => 'face-frown'],
+                ['name' => 'Energetic', 'icon' => 'bolt'],
+            ];
+            $routines = [
+                ['name' => 'Morning Routine', 'icon' => 'sun'],
+                ['name' => 'Evening Routine', 'icon' => 'moon'],
+            ];
+            $activities = [
+                ['name' => 'Study', 'icon' => 'academic-cap'],
+                ['name' => 'Draw', 'icon' => 'pencil-square'],
+                ['name' => 'Read', 'icon' => 'book-open'],
+            ];
 
             foreach ($moods as $mood) {
                 Mood::create([
                     'user_id' => $user->id,
-                    'name' => $mood,
+                    'name' => $mood['name'],
+                    'icon' => $mood['icon'],
                 ]);
             }
 
             foreach ($routines as $routine) {
                 Routine::create([
                     'user_id' => $user->id,
-                    'name' => $routine,
+                    'name' => $routine['name'],
+                    'icon' => $routine['icon'],
                 ]);
             }
 
             foreach ($activities as $activity) {
                 Activity::create([
                     'user_id' => $user->id,
-                    'name' => $activity,
+                    'name' => $activity['name'],
+                    'icon' => $activity['icon'],
                 ]);
             }
         });

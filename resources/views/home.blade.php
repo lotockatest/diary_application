@@ -53,7 +53,7 @@
         <input type="hidden" name="date" id="date">
         
         <div class="mb-4">
-            <label class="block font-medium mb-1">Mood for the day:</label>
+            <label class="block font-medium text-purple-600 mb-1">Mood for the day:</label>
             <select id="mood"  name="mood" class="w-full border rounded-lg px-3 py-2">
                 @foreach($moods as $mood)
                     <option value="{{ $mood->name }}">{{ $mood->name }}</option>
@@ -62,31 +62,39 @@
         </div>
 
         <div class="mb-4">
-            <label class="block font-medium mb-1">Activities:</label>
+            <label class="block font-medium text-purple-600 mb-1">Activities:</label>
             <div class="flex flex-wrap gap-2">
                 @foreach($activities as $activity)
-                    <label>
-                        <input type="checkbox" name="activities[]" value="{{ $activity->name }}" class="mr-1">
-                        {{ $activity->name }}
+                    <label class="cursor-pointer">
+                        <input type="checkbox" name="activities[]" value="{{ $activity->name }}" class="hidden peer">
+                        <div class="flex items-center gap-2 border rounded-lg px-3 py-2
+                                    peer-checked:bg-purple-100 peer-checked:border-purple-600 transition-colors duration-150">
+                            <x-dynamic-component :component="'heroicon-s-' . ($activity->icon ?? 'face-smile')" class="w-5 h-5 text-purple-600"/>
+                            <span>{{ $activity->name }}</span>
+                        </div>
                     </label>
                 @endforeach
             </div>
         </div>
         
         <div class="mb-4">
-            <label class="block font-medium mb-1">Routines:</label>
+            <label class="block font-medium text-purple-600 mb-1">Routines:</label>
             <div class="flex flex-wrap gap-2">
                 @foreach($routines as $routine)
-                    <label>
-                        <input type="checkbox" name="routines[]" value="{{ $routine->name }}" class="mr-1">
-                        {{ $routine->name }}
+                    <label class="cursor-pointer">
+                        <input type="checkbox" name="routines[]" value="{{ $routine->name }}" class="hidden peer">
+                        <div class="flex items-center gap-2 border rounded-lg px-3 py-2
+                                    peer-checked:bg-purple-100 peer-checked:border-purple-600 transition-colors duration-150">
+                            <x-dynamic-component :component="'heroicon-s-' . ($routine->icon ?? 'face-smile')" class="w-5 h-5 text-purple-600"/>
+                            <span>{{ $routine->name }}</span>
+                        </div>
                     </label>
                 @endforeach
             </div>
         </div>
 
         <div class="mb-4">
-            <label class="block font-medium mb-1">Notes:</label>
+            <label class="block font-medium text-purple-600 mb-1">Notes:</label>
             <textarea id="notes" name="notes" rows="4" class="w-full border rounded-lg px-3 py-2"></textarea>
         </div>
 
