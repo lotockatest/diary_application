@@ -65,4 +65,20 @@ class User extends Authenticatable
             }
         });
     }
+
+    public function routineGoals() {
+        return $this->hasMany(RoutineGoal::class);
+    }
+
+    public function activityGoals() {
+        return $this->hasMany(ActivityGoal::class);
+    }
+
+    public function routines() {
+        return $this->hasMany(Routine::class);
+    }
+
+    public function activities() {
+        return $this->hasMany(Activity::class);
+    }
 }

@@ -38,7 +38,12 @@ Route::put('/customization/activity/{activity}/update', [CustomizationController
 Route::put('/customization/mood/{mood}/update', [CustomizationController::class, 'updateMood'])->name('customization.mood.update');
 
 Route::get('/statistics', [StatisticsController::class, 'index'])->name('statistics');
+
 Route::get('/goal', [GoalController::class, 'index'])->name('goal');
+Route::get('/goals', [GoalController::class, 'index'])->name('goals.index');
+Route::post('/goals', [GoalController::class, 'store'])->name('goals.store');
+Route::put('/goals/{goal}', [GoalController::class, 'update'])->name('goals.update');
+Route::delete('/goals/{id}', [GoalController::class, 'destroy'])->name('goals.destroy');
 
 Route::post('/logout', function () {Auth::logout();request()->session()->invalidate();request()->session()->regenerateToken();return redirect('/login');})->name('logout');
 

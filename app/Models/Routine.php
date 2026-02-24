@@ -12,4 +12,8 @@ class Routine extends Model
     public function user() {
         return $this->belongsTo(User::class);
     }
+
+    public function goals() {
+        return $this->hasMany(RoutineGoal::class);
+    }
 }

@@ -28,7 +28,7 @@
      data-activities='@json($activitiesCount)'>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 gap-6">
         <div>
             <canvas id="moodsChart"></canvas>
         </div>
