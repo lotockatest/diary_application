@@ -3,6 +3,7 @@
 @section('content')
 
 <div class="flex justify-center gap-4 mb-4">
+    <a href="{{ route('profile.show') }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-center">Profile</a>
     <a href="{{ route('customization') }}" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-center">Customization</a>
     <a href="{{ route('statistics') }}" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-center">Statistics</a>
     <a href="{{ route('goal') }}" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-center">Goals</a>
@@ -50,7 +51,7 @@
             </div>
         @endif
 
-        <input type="hidden" name="date" id="date">
+        <input type="hidden" name="date" id="date" value="{{ old('date') }}">
         
         <div class="mb-4">
             <label class="block font-medium text-purple-600 mb-1">Mood for the day:</label>
@@ -102,10 +103,24 @@
             <button type="button" id="closeModal" class="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400">Cancel</button>
             <button type="submit" id="saveEntry" class="px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700">Save Entry</button>
         </div>
-
+        </form>
         <div id="entryData" data-entries='@json($entries ?? [])'></div>
     </div>
 </div>
+<p class="text-center text-md text-purple-600 font-medium mb-4">Welcome, {{ auth()->user()->username }}!</p>
+@if ($errors->any())
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const entryModal = document.getElementById('entryModal');
+    const modalDate = document.getElementById('modalDate');
+    const oldDate = "{{ old('date') }}";
+    if (entryModal && oldDate) {
+        entryModal.classList.remove('hidden');
+        modalDate.textContent = "Day: " + parseInt(oldDate.split('-')[2]);
+    }
+});
+</script>
+@endif
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const savedEntries = JSON.parse(document.getElementById('entryData').dataset.entries);
@@ -213,7 +228,9 @@ function openModal(day) {
     }
 
     const today = new Date();
-    const isToday = fullDate === today.toISOString().split('T')[0];
+    //const isToday = fullDate === today.toISOString().split('T')[0];
+    const todayLocal = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0');
+    const isToday = fullDate === todayLocal;
 
     moodSelect.disabled = !isToday;
     activities.forEach(cb => cb.disabled = !isToday);

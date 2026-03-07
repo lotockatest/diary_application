@@ -10,6 +10,7 @@ use App\Http\Controllers\CustomizationController;
 use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\GoalController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\ProfileController;
 
 Route::get('/', function () {return redirect()->route('login');});
 #Route::get('/', function () {   return view('welcome');});
@@ -46,4 +47,8 @@ Route::put('/goals/{goal}', [GoalController::class, 'update'])->name('goals.upda
 Route::delete('/goals/{id}', [GoalController::class, 'destroy'])->name('goals.destroy');
 
 Route::post('/logout', function () {Auth::logout();request()->session()->invalidate();request()->session()->regenerateToken();return redirect('/login');})->name('logout');
+
+Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+Route::delete('/profile/delete', [ProfileController::class, 'delete'])->name('profile.delete');
 
