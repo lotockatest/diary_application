@@ -23,6 +23,10 @@ class EntryController extends Controller
             'notes' => 'nullable|string',
         ]);
 
+        if ($request->date !== now()->format('Y-m-d')) {
+            return redirect()->back();
+        }
+
         Entry::updateOrCreate([
             'user_id' => Auth::id(),
             'date' => Carbon::parse($request->date)->format('Y-m-d'),
