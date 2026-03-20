@@ -12,6 +12,7 @@ use App\Models\Activity;
 
 class User extends Authenticatable
 {
+    //Fields that can be filled
     protected $fillable = [
         'username',
         'email',
@@ -21,10 +22,10 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
     ];
-
+    //Run when a new user is created
     protected static function booted() {
         static::created(function ($user) {
-
+            //Create default moods, routines and activities
             $moods = [
                 ['name' => 'Happy', 'icon' => 'face-smile'],
                 ['name' => 'Sad', 'icon' => 'face-frown'],
@@ -65,19 +66,19 @@ class User extends Authenticatable
             }
         });
     }
-
+    //Each user has many goals connected to routines (relationship)
     public function routineGoals() {
         return $this->hasMany(RoutineGoal::class);
     }
-
+    //Each user has many goals connected to activities (relationship)
     public function activityGoals() {
         return $this->hasMany(ActivityGoal::class);
     }
-
+    //Each user has many routines (relationship)
     public function routines() {
         return $this->hasMany(Routine::class);
     }
-
+    //Each user has many activities (relationship)
     public function activities() {
         return $this->hasMany(Activity::class);
     }

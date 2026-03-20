@@ -1,11 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
+<!-- Title -->
 <h2 class="text-2xl font-bold text-center text-purple-600 mb-6">Register</h2>
-
+<!-- Registration form -->
 <form method="POST" action="{{ route('register') }}" class="space-y-4">
     @csrf
-
+    <!-- Username input (with error display) -->
     <div>
         <label class="block text-sm font-medium">Username</label>
         <input type="text" name="username" required
@@ -15,7 +16,7 @@
             <p class="text-red-500 text-sm">{{ $message }}</p>
         @enderror
     </div>
-
+    <!-- Email input (with error display) -->
     <div>
         <label class="block text-sm font-medium">Email</label>
         <input type="email" name="email" required
@@ -25,7 +26,7 @@
             <p class="text-red-500 text-sm">{{ $message }}</p>
         @enderror
     </div>
-
+    <!-- Password input (with error display) -->
     <div>
         <label class="block text-sm font-medium">Password</label>
         <input type="password" name="password" required
@@ -34,13 +35,13 @@
             <p class="text-red-500 text-sm">{{ $message }}</p>
         @enderror
     </div>
-
+    <!-- Submit button -->
     <button type="submit"
             class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg transition">
         Register
     </button>
 </form>
-
+<!-- Route to login -->
 <p class="text-sm text-center mt-4">
     Already have an account?
     <a href="{{ route('login') }}" class="text-blue-600 hover:underline">Login here</a>

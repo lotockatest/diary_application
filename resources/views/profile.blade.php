@@ -2,6 +2,7 @@
 @section('content')
 <div class="bg-white rounded-2xl shadow-lg p-6">
     <div class="flex items-center justify-between mb-4">
+        <!-- Page title and back button -->
         <h1 class="text-2xl font-bold text-purple-600 mb-4">Profile</h1>
         <a href="{{ route('home') }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Back</a>
     </div>
@@ -10,33 +11,40 @@
             {{ session('success') }}
         </div>
     @endif
+    <!-- Email display -->
     <div class="mb-6">
         <h3 class="font-semibold text-gray-700">Email</h3>
         <p class="text-gray-600">{{ $user->email }}</p>
     </div>
+    <!-- Username display -->
     <div class="mb-6">
         <h3 class="font-semibold text-gray-700">Username</h3>
         <p class="text-gray-600">{{ $user->username }}</p>
     </div>
+    <!-- Button to open edit form -->
     <button onclick="toggleEdit()" 
         class="px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 mb-4">
         Edit Profile
     </button>
     <hr class="my-6">
+    <!-- Hidden edit form -->
     <div id="editForm" class="hidden">
         <h2 class="text-xl font-semibold text-purple-600 mb-4">Edit Profile</h2>
         <form method="POST" action="{{ route('profile.update') }}" class="space-y-4">
             @csrf
+            <!-- Username input -->
             <div>
                 <label class="block font-medium text-purple-600 mb-1">Username</label>
                 <input type="text" name="username" value="{{ $user->username }}" 
                        class="w-full border rounded-lg px-3 py-2">
             </div>
+            <!-- Email input -->
             <div>
                 <label class="block font-medium text-purple-600 mb-1">Email</label>
                 <input type="email" name="email" value="{{ $user->email }}" 
                        class="w-full border rounded-lg px-3 py-2">
             </div>
+            <!-- Submit button -->
             <button type="submit" 
                 class="px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700">
                 Save
@@ -44,6 +52,7 @@
         </form>
     </div>
     <hr class="my-6">
+    <!-- Profile deletion button with confirmation -->
     <form method="POST" action="{{ route('profile.delete') }}">
         @csrf
         @method('DELETE')
@@ -55,6 +64,7 @@
     </form>
 </div>
 <script>
+//Make the edit form visible
 function toggleEdit() {
     const form = document.getElementById('editForm');
     form.classList.toggle('hidden');

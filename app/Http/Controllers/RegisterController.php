@@ -9,26 +9,27 @@ use App\Http\Controllers\Controller;
 
 class RegisterController extends Controller
 {
-    //
+    //View page
     public function show()
     {
         return view('auth.register');
     }
-
+    //Create user
     public function store(Request $request)
     {
+        //Validate
         $validated = $request->validate([
             'username' => 'required|string|max:15',
             'email'    => 'required|email|unique:users',
             'password' => 'required|min:6|max:15',
         ]);
-
+        //Create
         User::create([
             'username' => $validated['username'],
             'email'    => $validated['email'],
             'password' => Hash::make($validated['password']),
         ]);
-
+        //Return to previous view
         return redirect()->route('login')->with('success', 'Account created successfully!');
     }
 }

@@ -9,13 +9,13 @@ use App\Models\Entry;
 
 class StatisticsController extends Controller
 {
-    //
+    //Show page
     public function index(Request $request) {
-
+        //Get the current user id
         $userId = Auth::id();
-
+        //Check timespan, default time range (week)
         $timeSpan = $request->time_span ?? 'week';
-
+        //Determine range based on a selected timespan
         switch ($timeSpan) {
             case 'month':
                 $start = Carbon::now()->startOfMonth();
@@ -26,6 +26,7 @@ class StatisticsController extends Controller
                 $end = Carbon::now()->endOfYear();
                 break;
             case 'custom':
+                //Use the custom dates if they are given otherwise can go back to default
                 $start = $request->start_date ? Carbon::parse($request->start_date) : Carbon::now()->startOfWeek();
                 $end = $request->end_date ? Carbon::parse($request->end_date) : Carbon::now()->endOfWeek();
                 break;
@@ -34,19 +35,19 @@ class StatisticsController extends Controller
                 $start = Carbon::now()->startOfWeek();
                 $end = Carbon::now()->endOfWeek();
         }
-
+        //Get entries within the selected date range for the specific user
         $entries = Entry::where('user_id', $userId)
             ->whereBetween('date', [$start, $end])
             ->get();
-
+        //Variables to used to store counts
         $moodsCount = [];
         $routinesCount = [];
         $activitiesCount = [];
-
+        //Simple loop through all entries and add count based on occurence
         foreach ($entries as $entry) {
 
             $moodsCount[$entry->mood] = ($moodsCount[$entry->mood] ?? 0) + 1;
-
+            //Each entry may have multiple routines and activities
             foreach ($entry->routines as $routine) {
                 $routinesCount[$routine] = ($routinesCount[$routine] ?? 0) + 1;
             }
@@ -55,7 +56,7 @@ class StatisticsController extends Controller
                 $activitiesCount[$activity] = ($activitiesCount[$activity] ?? 0) + 1;
             }
         }
-
+        //Return the view with the calculated data
         return view('statistics', compact(
             'moodsCount', 
             'routinesCount', 

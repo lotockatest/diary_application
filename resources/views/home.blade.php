@@ -1,26 +1,26 @@
 @extends('layouts.app')
 
 @section('content')
-
+<!-- Top navigation buttons -->
 <div class="flex justify-center gap-4 mb-4">
     <a href="{{ route('profile.show') }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-center">Profile</a>
     <a href="{{ route('customization') }}" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-center">Customization</a>
     <a href="{{ route('statistics') }}" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-center">Statistics</a>
     <a href="{{ route('goal') }}" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-center">Goals</a>
-    <form method="POST" action="{{ route('logout') }}"><!--{{ route('logout') }}-->
+    <form method="POST" action="{{ route('logout') }}">
         @csrf
         <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-center">Logout</button>
     </form>
 </div>
-
+<!-- Container for the calendar -->
 <div id="calendar" class="bg-white rounded-2xl shadow-lg p-6">
-    
+    <!-- Month navigation -->
     <div class="flex justify-between items-center mb-4">
         <button id="prevMonth" class="text-blue-600 hover:text-blue-800">&lt;</button>
         <h2 id="monthYear" class="text-xl font-bold text-center text-purple-600"></h2>
         <button id="nextMonth" class="text-blue-600 hover:text-blue-800">&gt;</button>
     </div>
-    
+    <!-- Labels for days of the week -->
     <div class="grid grid-cols-7 text-center text-sm font-semibold text-gray-500 mb-2">
         <div>Sun</div>
         <div>Mon</div>
@@ -30,14 +30,15 @@
         <div>Fri</div>
         <div>Sat</div>
     </div>
-
+    <!-- Grid for days -->
     <div id="days" class="grid grid-cols-7 gap-2 text-center"></div>
 </div>
-
+<!-- Entry modal -->
 <div id="entryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
     <div class="bg-white rounded-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
+        <!-- Selected day -->
         <h2 class="text-2xl font-bold text-center text-purple-600 mb-4" id="modalDate"></h2>
-
+        <!-- Validation -->
         <form method="POST" action="{{ route('entry.store') }}">
             @csrf
 
@@ -52,7 +53,7 @@
         @endif
 
         <input type="hidden" name="date" id="date" value="{{ old('date') }}">
-        
+        <!-- Mood -->
         <div class="mb-4">
             <label class="block font-medium text-purple-600 mb-1">Mood for the day:</label>
             <select id="mood"  name="mood" class="w-full border rounded-lg px-3 py-2">
@@ -61,7 +62,7 @@
                 @endforeach
             </select>
         </div>
-
+        <!-- Activities -->
         <div class="mb-4">
             <label class="block font-medium text-purple-600 mb-1">Activities:</label>
             <div class="flex flex-wrap gap-2">
@@ -77,7 +78,7 @@
                 @endforeach
             </div>
         </div>
-        
+        <!-- Routines -->
         <div class="mb-4">
             <label class="block font-medium text-purple-600 mb-1">Routines:</label>
             <div class="flex flex-wrap gap-2">
@@ -93,21 +94,24 @@
                 @endforeach
             </div>
         </div>
-
+        <!-- Notes -->
         <div class="mb-4">
             <label class="block font-medium text-purple-600 mb-1">Notes:</label>
             <textarea id="notes" name="notes" rows="4" class="w-full border rounded-lg px-3 py-2"></textarea>
         </div>
-
+        <!-- Buttons for saving and cancelling -->
         <div class="flex justify-end gap-2">
             <button type="button" id="closeModal" class="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400">Cancel</button>
             <button type="submit" id="saveEntry" class="px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700">Save Entry</button>
         </div>
         </form>
+        <!-- Stored for use in JS -->
         <div id="entryData" data-entries='@json($entries ?? [])'></div>
     </div>
 </div>
+<!-- Welcome message -->
 <p class="text-center text-md text-purple-600 font-medium mb-4">Welcome, {{ auth()->user()->username }}!</p>
+<!-- Reopen modal if any validation failed -->
 @if ($errors->any())
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -123,6 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
 @endif
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    //Load entries
     const savedEntries = JSON.parse(document.getElementById('entryData').dataset.entries);
     const monthYear = document.getElementById('monthYear');
     const daysContainer = document.getElementById('days');
@@ -130,40 +135,42 @@ document.addEventListener('DOMContentLoaded', function () {
     const nextMonthBtn = document.getElementById('nextMonth');
 
     let currentDate = new Date();
-
+    //Create calendar interface
     function updateCalendar() {
         const year = currentDate.getFullYear();
         const month = currentDate.getMonth();
+        //Display the month and year
         monthYear.textContent = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
 
         daysContainer.innerHTML = '';
-
+        //First weekday of the month
         const firstDay = new Date(year, month, 1).getDay();
+        //Total days in month
         const lastDate = new Date(year, month + 1, 0).getDate();
 
-        
+        //Empty slots before first day
         for (let i = 0; i < firstDay; i++) {
             const blank = document.createElement('div');
             daysContainer.appendChild(blank);
         }
 
-        
+        //Make cells for days
         for (let i = 1; i <= lastDate; i++) {
             const day = document.createElement('div');
             day.textContent = i;
             day.className = 'p-2 rounded-lg hover:bg-blue-100 cursor-pointer';
-            
+            //Highlight current day
             const today = new Date();
             if (i === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
                 day.className += ' bg-purple-200 font-bold';
             }
-            
+            //Upon click open the modal
             day.addEventListener('click', () => openModal(i));
             daysContainer.appendChild(day);
         }
         
     }
-
+    //Month navigation
     prevMonthBtn.addEventListener('click', function() {
         currentDate.setMonth(currentDate.getMonth() - 1);
         updateCalendar();
@@ -176,26 +183,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
     updateCalendar();
 
- 
+//Elements belonging to the modal
 const entryModal = document.getElementById('entryModal');
 const modalDate = document.getElementById('modalDate');
 const closeModalBtn = document.getElementById('closeModal');
 const saveEntryBtn = document.getElementById('saveEntry');
-
+//Open modal for the selected day
 function openModal(day) {
     const year = currentDate.getFullYear();
     const month = String(currentDate.getMonth() + 1).padStart(2, '0');
     const formattedDay = String(day).padStart(2, '0');
 
     const fullDate = `${year}-${month}-${formattedDay}`;
-
+    //Set input and title
     document.getElementById('date').value = fullDate;
     modalDate.textContent = `Day: ${day}`;
-
+    //Reset the form
     document.querySelector('select[name="mood"]').value = 'Happy';
     document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
     document.querySelector('textarea[name="notes"]').value = '';
-
+    //Find the existing entry
     const existingEntry = savedEntries.find(entry => {
         return entry.date.startsWith(fullDate);
     });
@@ -209,7 +216,7 @@ function openModal(day) {
     activities.forEach(cb => cb.checked = false);
     routines.forEach(cb => cb.checked = false);
     notes.value = '';
-
+    //If an entry exists already, then fields are prefilled
     if (existingEntry) {
 
         document.querySelector('select[name="mood"]').value = existingEntry.mood;
@@ -226,12 +233,12 @@ function openModal(day) {
 
         document.querySelector('textarea[name="notes"]').value = existingEntry.notes ?? '';
     }
-
+    //Only allow editing the current day
     const today = new Date();
     //const isToday = fullDate === today.toISOString().split('T')[0];
     const todayLocal = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0');
     const isToday = fullDate === todayLocal;
-
+    //Hide save button if not current day and disable selects
     moodSelect.disabled = !isToday;
     activities.forEach(cb => cb.disabled = !isToday);
     routines.forEach(cb => cb.disabled = !isToday);
@@ -240,7 +247,7 @@ function openModal(day) {
 
     entryModal.classList.remove('hidden');
 }
-
+//Cancellation check 
 closeModalBtn.addEventListener('click', () => {
     if (confirm('Are you sure you want to cancel?')) {
             entryModal.classList.add('hidden');

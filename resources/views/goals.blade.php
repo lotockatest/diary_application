@@ -2,12 +2,12 @@
 
 @section('content')
 <div class="max-w-3xl mx-auto p-6 bg-white rounded-2xl shadow-lg">
-
+    <!-- Title -->
     <h1 class="text-2xl font-bold mb-4 text-purple-600">Goals</h1>
-
+    <!-- Add new and the back button -->
     <button id="addGoalBtn" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 mb-4">Add Goal</button>
     <a href="{{ route('home') }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 ml-2">Back</a>
-
+    <!-- List of existing goals -->
     <div id="goalsList" class="space-y-4">
         @forelse ($goals ?? [] as $goal)
             <div class="p-4 border rounded-lg flex justify-between items-center" data-id="{{ $goal->id }}" data-name="{{ $goal->name }}" data-count="{{ $goal->target_count }}" data-date="{{ $goal->target_date->format('Y-m-d') }}" data-type="{{ $goal->type }}" data-related="{{ $goal->related_id }}">
@@ -19,6 +19,7 @@
                         <div class="bg-purple-600 h-2 rounded-full progress-bar" data-percentage="{{ $goal->percentage }}"></div>
                     </div>
                 </div>
+                <!-- Edit button and delete form -->
                 <div class="flex gap-2">
                     <button class="editGoalBtn px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Edit</button>
                     <form method="POST" action="{{ route('goals.destroy', $goal->id) }}">
@@ -30,38 +31,39 @@
                     </form>
                 </div>
             </div>
+        <!-- If there are no goals then this message -->
         @empty
             <p class="text-gray-500">No goals made yet. Click "Add Goal" to create one.</p>
         @endforelse
     </div>
-
+    <!-- Modal for adding and editing goals -->
     <div id="goalModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="bg-white rounded-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
             <h2 class="text-2xl font-bold text-purple-600 mb-4" id="goalModalTitle">Add Goal</h2>
-
+            <!-- Form -->
             <form id="goalForm" method="POST" action="{{ route('goals.store') }}">
                 @csrf
                 <input type="hidden" name="_method" id="formMethod" value="POST">
                 <input type="hidden" name="goal_id" id="goalId">
-
+                <!-- Goal name input -->
                 <div class="mb-4">
                     <label class="block font-medium mb-1">Goal Name:</label>
                     <input type="text" name="name" id="goalName" class="w-full border rounded-lg px-3 py-2">
                     <p class="text-red-600 text-sm hidden mt-1" id="errorName">Goal name is required!</p>
                 </div>
-
+                <!-- Goal count input -->
                 <div class="mb-4">
                     <label class="block font-medium mb-1">Count:</label>
                     <input type="number" name="target_count" id="goalCount" min="1" value="1" class="w-full border rounded-lg px-3 py-2">
                     <p class="text-red-600 text-sm hidden mt-1" id="errorCount">Count is required!</p>
                 </div>
-
+                <!-- Goal target date input -->
                 <div class="mb-4">
                     <label class="block font-medium mb-1">Target Date:</label>
                     <input type="date" name="target_date" id="goalDate" class="w-full border rounded-lg px-3 py-2">
                     <p class="text-red-600 text-sm hidden mt-1" id="errorDate">Target date is required!</p>
                 </div>
-
+                <!-- Goal type set (routine or activity) -->
                 <div class="mb-4">
                     <label class="block font-medium mb-1">Goal Type:</label>
                     <select name="type" id="goalType" class="w-full border rounded-lg px-3 py-2">
@@ -70,7 +72,7 @@
                     </select>
                     <p class="text-red-600 text-sm hidden mt-1" id="errorType">Choosing a goal type is required!</p>
                 </div>
-
+                <!-- Select related item -->
                 <div class="mb-4">
                     <label class="block font-medium mb-1">Select Action:</label>
                     <select name="related_id" id="goalRelated" class="w-full border rounded-lg px-3 py-2">
@@ -84,7 +86,7 @@
                     </select>
                     <p class="text-red-600 text-sm hidden mt-1" id="errorRelated">Selecting an action is required!</p>
                 </div>
-
+                <!-- Buttons for saving and cancelling -->
                 <div class="flex justify-end gap-2">
                     <button type="button" id="cancelGoalBtn" class="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400">Cancel</button>
                     <button type="submit" class="px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700">Save</button>
@@ -97,6 +99,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    //All DOM and error related elements
     const addGoalBtn = document.getElementById('addGoalBtn');
     const goalModal = document.getElementById('goalModal');
     const cancelGoalBtn = document.getElementById('cancelGoalBtn');
@@ -113,9 +116,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const goalRelated = document.getElementById('goalRelated');
     const errorType = document.getElementById('errorType');
     const errorRelated = document.getElementById('errorRelated');
-
+    //Creating modal for new goal
     addGoalBtn.addEventListener('click', () => {
         goalModalTitle.textContent = 'Add Goal';
+        //Reseting values
         goalId.value = '';
         goalName.value = '';
         goalCount.value = '';
@@ -123,11 +127,11 @@ document.addEventListener('DOMContentLoaded', () => {
         hideErrors();
         goalModal.classList.remove('hidden');
     });
-
+    //Close modal
     cancelGoalBtn.addEventListener('click', () => {
         goalModal.classList.add('hidden');
     });
-
+    //Validation before submitting the form
     goalForm.addEventListener('submit', (e) => {
         e.preventDefault();
         hideErrors();
@@ -176,17 +180,17 @@ document.addEventListener('DOMContentLoaded', () => {
         //if(!valid) return;
         goalForm.submit();
     });
-
+    //Used to hide any error messages (when creating new goal)
     function hideErrors() {
         [errorName, errorCount, errorDate].forEach(err => err.classList.add('hidden'));
     }
-
+    //Confirmation dialog for cancelling
     cancelGoalBtn.addEventListener('click', () => { 
         if(confirm('Are you sure you want to cancel?')) { 
             goalModal.classList.add('hidden'); 
         } 
     });
-
+    //Deletion confirmation dialog
     document.querySelectorAll('.deleteGoalBtn').forEach(button => {
         button.addEventListener('click', function (e) {
             if (!confirm('Are you sure you want to delete the goal?')) {
@@ -194,12 +198,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
-
+    //Set the width of the progress bar
     document.querySelectorAll('.progress-bar').forEach(bar => {
         const percent = bar.dataset.percentage || 0;
         bar.style.width = percent + '%';
     });
-
+    //Filter Select dropdown based on category
     goalType.addEventListener('change', () => {
         const selectedType = goalType.value;
         Array.from(goalRelated.options).forEach(option => {
@@ -214,10 +218,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     goalType.dispatchEvent(new Event('change'));
-
+    //Edit goal
     document.querySelectorAll('.editGoalBtn').forEach(button => {
         button.addEventListener('click', function () {
-
+            //Getting html data
             const goalCard = this.closest('[data-id]');
             const id = goalCard.dataset.id;
             const name = goalCard.dataset.name;
@@ -227,10 +231,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const related = goalCard.dataset.related;
 
             goalModalTitle.textContent = 'Edit Goal';
-
+            //Set the form to update
             goalForm.action = `/goals/${id}`;
             document.getElementById('formMethod').value = 'PUT';
-
+            //Fill with data
             goalId.value = id;
             goalName.value = name;
             goalCount.value = count;

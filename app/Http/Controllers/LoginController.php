@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 
 class LoginController extends Controller
 {
-    //
+    //Login (check credentials, validate inputs, create session)
     public function login(Request $request)
     {
         $credentials = $request->validate([
