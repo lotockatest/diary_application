@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Models\Entry;
+use App\Models\User;
+use App\Models\ActivityGoal;
+use App\Models\RoutineGoal;
 
 class StatisticsController extends Controller
 {
@@ -39,6 +42,23 @@ class StatisticsController extends Controller
         $entries = Entry::where('user_id', $userId)
             ->whereBetween('date', [$start, $end])
             ->get();
+        //Total entries count (for current user, all time)
+        $totalEntries = Entry::where('user_id', $userId)->count();
+        //Entries in the selected time (current user)
+        $entriesInRange = $entries->count();
+        //Total entries in range (all users)
+        $totalEntriesAllUsers = Entry::whereBetween('date', [$start, $end])->count();
+        //Total number of users
+        $totalUsers = User::count();
+        //Average entries per user (in selected time)
+        $avgEntriesPerUser = $totalUsers > 0 ? round($totalEntriesAllUsers / $totalUsers, 2) : 0;
+        //Total goals created (current user)
+        $totalGoals = ActivityGoal::where('user_id', $userId)->count() + RoutineGoal::where('user_id', $userId)->count();
+        //Get all goals for current user
+        $activityGoals = ActivityGoal::where('user_id', $userId)->get();
+        $routineGoals = RoutineGoal::where('user_id', $userId)->get();
+        //Amount of completed goals
+        $completedGoals = $activityGoals->filter(fn($goal) => $goal->percentage >= 100)->count() + $routineGoals->filter(fn($goal) => $goal->percentage >= 100)->count();
         //Variables to used to store counts
         $moodsCount = [];
         $routinesCount = [];
@@ -63,7 +83,12 @@ class StatisticsController extends Controller
             'activitiesCount',
             'timeSpan',
             'start',
-            'end'
+            'end',
+            'totalEntries',
+            'entriesInRange',
+            'avgEntriesPerUser',
+            'totalGoals',
+            'completedGoals'
         ));
     }
 }
